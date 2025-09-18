@@ -81,11 +81,11 @@ const QuizPage = ({ quizId, onFinishQuiz }) => {
             try {
                 const quizData = await getQuizById(quizId);
                 if (!quizData || !quizData.questions || quizData.questions.length === 0) {
-                    throw new Error("Quiz data is incomplete or missing questions.");
+                    throw new Error("Quiz not found or has no questions");
                 }
                 setQuiz(quizData);
             } catch (err) {
-                setError('Failed to load the quiz. It may not have any questions.');
+                setError('failed to load quiz.Please try again later unfortunately');
                 console.error(err);
             }
             setLoading(false);
