@@ -42,7 +42,7 @@ const AssignmentPage = ({ assignmentId, onBack }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!submissionFile) {
-            setSubmitError('Please select a file to submit.');
+            setSubmitError('please select a file  to submit');
             return;
         }
         setSubmitting(true);
@@ -56,12 +56,12 @@ const AssignmentPage = ({ assignmentId, onBack }) => {
             // The user.email is now correctly passed to the function.
             await createSubmission(user.uid, user.email, assignmentId, fileURL, submissionFile.name);
 
-            setSubmitSuccess('Your assignment was submitted successfully!');
+            setSubmitSuccess('Assignment submitted successfully!');
             setSubmissionFile(null);
             document.getElementById('submission-upload').value = null;
 
         } catch (err) {
-            setSubmitError('Failed to submit assignment. Please try again.');
+            setSubmitError('we are sorry,there was an error submitting an assignment.Please try again');
             console.error(err);
         }
         setSubmitting(false);
