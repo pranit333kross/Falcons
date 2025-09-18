@@ -64,17 +64,23 @@ const DashboardPage = ({ onSelectCourse }) => {
                 </div>
             </div>
 
-            {/* --- DISPLAY FILTERED COURSES --- */}
+            {/* --- DISPLAY FILTERED COURSES WITH ANIMATION --- */}
             {filteredCourses.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                   {filteredCourses.map((course, index) => (
-                        <CourseCard
+                    {filteredCourses.map((course, index) => (
+                        <div
                             key={course.id}
-                            course={course}
-                            onSelect={() => onSelectCourse(course.id)}
-                            index={index} // Pass the index for the animation
-                        />
-                   
+                            style={{
+                                animation: `fadeUp 0.6s ease ${index * 0.1}s both`
+                            }}
+                            className="will-change-transform"
+                        >
+                            <CourseCard
+                                course={course}
+                                onSelect={() => onSelectCourse(course.id)}
+                                index={index}
+                            />
+                        </div>
                     ))}
                 </div>
             ) : (
@@ -88,3 +94,4 @@ const DashboardPage = ({ onSelectCourse }) => {
 };
 
 export default DashboardPage;
+
