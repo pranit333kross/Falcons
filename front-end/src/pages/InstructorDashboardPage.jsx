@@ -149,7 +149,7 @@ const InstructorDashboardPage = ({ onViewSubmissions }) => {
                         ))}
                     </div>
                 ) : (
-                    <p className="text-slate-500">No student reviews have been submitted for your courses yet.</p>
+                    <p className="text-slate-500">No student reviews have been submitted for your courses yet.Encourage your students to share their feedback!</p>
                 )}
             </div>
             
@@ -179,14 +179,14 @@ const InstructorDashboardPage = ({ onViewSubmissions }) => {
                         ))}
                     </ul>
                 ) : (
-                    <p className="text-slate-500">You haven't created any assignments yet.</p>
+                    <p className="text-slate-500">You haven't created any new assignments yet.</p>
                 )}
             </div>
 
             {/* Content Creation Forms */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
                  <div className="bg-white p-8 rounded-xl shadow-md">
-                    <h2 className="text-2xl font-semibold mb-6">Create Course & Upload Video</h2>
+                    <h2 className="text-2xl font-semibold mb-6">Create Course & Upload Videos</h2>
                     <form onSubmit={handleVideoSubmit} className="space-y-6">
                         <div>
                             <label className="block text-sm font-medium text-slate-700">Course Title</label>
@@ -197,7 +197,7 @@ const InstructorDashboardPage = ({ onViewSubmissions }) => {
                             <textarea value={courseDescription} onChange={(e) => setCourseDescription(e.target.value)} required rows="3" className="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm"></textarea>
                         </div>
                          <div>
-                            <label className="block text-sm font-medium text-slate-700">Upload Lecture Video</label>
+                            <label className="block text-sm font-medium text-slate-700">Upload Lecture Videos</label>
                             <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-300 border-dashed rounded-md">
                                <div className="space-y-1 text-center">
                                     <UploadCloud className="mx-auto h-12 w-12 text-slate-400" />
@@ -206,7 +206,7 @@ const InstructorDashboardPage = ({ onViewSubmissions }) => {
                                             <span>Upload a file</span>
                                             <input id="video-upload" name="video-upload" type="file" className="sr-only" onChange={(e) => setVideoFile(e.target.files[0])} accept="video/*"/>
                                         </label>
-                                        <p className="pl-1">or drag and drop</p>
+                                        <p className="pl-1">or drag & drop</p>
                                     </div>
                                     <p className="text-xs text-slate-500">{videoFile ? videoFile.name : 'MP4, WEBM, OGG up to 500MB'}</p>
                                </div>
