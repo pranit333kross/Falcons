@@ -96,30 +96,36 @@ const SubjectPage = ({ subjectId, onBack, onStartQuiz, onPlayVideo, onSelectAssi
     if (!course) return <div className="text-center mt-10">Course not found.</div>;
 
     return (
-        <div>
-            <button onClick={onBack} className="flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-800 mb-6">
+        <div style={{ animation: 'fadeInScale 0.7s cubic-bezier(.4,0,.2,1) both' }}>
+            <button onClick={onBack} className="flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-800 mb-6"
+                style={{ animation: 'fadeInUp 0.5s cubic-bezier(.4,0,.2,1) both' }}>
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Dashboard
             </button>
-            <h1 className="text-4xl font-bold text-slate-900">{course.title}</h1>
-            <div className="flex items-center mt-2">
+            <h1 className="text-4xl font-bold text-slate-900"
+                style={{ animation: 'fadeInUp 0.6s cubic-bezier(.4,0,.2,1) both' }}>
+                {course.title}
+            </h1>
+            <div className="flex items-center mt-2"
+                style={{ animation: 'fadeInUp 0.7s cubic-bezier(.4,0,.2,1) both' }}>
                 <StarRating rating={averageRating} />
                 <span className="ml-2 text-slate-600">({reviews.length} reviews)</span>
             </div>
-            <p className="text-slate-600 mt-2 text-lg">{course.description}</p>
+            <p className="text-slate-600 mt-2 text-lg"
+                style={{ animation: 'fadeInUp 0.8s cubic-bezier(.4,0,.2,1) both' }}>
+                {course.description}
+            </p>
             
             <div className="mt-10 space-y-8">
-                
-                {/* --- THIS IS THE CORRECTED PART --- */}
-                {/* The missing sections have been added back in. */}
-                
                 {/* Video Lectures Section */}
                 {lectures.length > 0 && (
-                     <div className="bg-white p-6 rounded-xl shadow-md">
+                     <div className="bg-white p-6 rounded-xl shadow-md"
+                        style={{ animation: 'fadeInScale 0.8s cubic-bezier(.4,0,.2,1) both' }}>
                         <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Video Lectures</h2>
                         <ul className="space-y-3">
-                            {lectures.map(lecture => (
-                                <li key={lecture.id}>
+                            {lectures.map((lecture, idx) => (
+                                <li key={lecture.id}
+                                    style={{ animation: `fadeInUp 0.6s ${0.05 * idx}s both` }}>
                                     <button onClick={() => onPlayVideo(lecture)} className="w-full flex items-center p-4 rounded-lg bg-slate-50 hover:bg-indigo-50 transition-colors text-left">
                                         <PlayCircle className="h-6 w-6 text-indigo-500 mr-4 flex-shrink-0" />
                                         <div className="flex-grow">
@@ -135,11 +141,13 @@ const SubjectPage = ({ subjectId, onBack, onStartQuiz, onPlayVideo, onSelectAssi
 
                 {/* Assignments Section */}
                 {assignments.length > 0 && (
-                    <div className="bg-white p-6 rounded-xl shadow-md">
+                    <div className="bg-white p-6 rounded-xl shadow-md"
+                        style={{ animation: 'fadeInScale 0.9s cubic-bezier(.4,0,.2,1) both' }}>
                         <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Assignments</h2>
                         <ul className="space-y-3">
-                            {assignments.map(assignment => (
-                                <li key={assignment.id}>
+                            {assignments.map((assignment, idx) => (
+                                <li key={assignment.id}
+                                    style={{ animation: `fadeInUp 0.7s ${0.05 * idx}s both` }}>
                                     <button 
                                         onClick={() => onSelectAssignment(assignment.id)}
                                         className="w-full flex items-center p-4 rounded-lg bg-slate-50 hover:bg-indigo-50 transition-colors text-left"
@@ -158,11 +166,13 @@ const SubjectPage = ({ subjectId, onBack, onStartQuiz, onPlayVideo, onSelectAssi
 
                 {/* Quizzes Section */}
                 {quizzes.length > 0 && (
-                    <div className="bg-white p-6 rounded-xl shadow-md">
+                    <div className="bg-white p-6 rounded-xl shadow-md"
+                        style={{ animation: 'fadeInScale 1s cubic-bezier(.4,0,.2,1) both' }}>
                         <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Available Quizzes</h2>
                         <ul className="space-y-3">
-                            {quizzes.map(quiz => (
-                                <li key={quiz.id}>
+                            {quizzes.map((quiz, idx) => (
+                                <li key={quiz.id}
+                                    style={{ animation: `fadeInUp 0.8s ${0.05 * idx}s both` }}>
                                     <button onClick={() => onStartQuiz(quiz.id)} className="w-full flex items-center p-4 rounded-lg bg-slate-50 hover:bg-indigo-50 transition-colors text-left">
                                         <BookOpen className="h-6 w-6 text-indigo-500 mr-4 flex-shrink-0" />
                                         <div className="flex-grow">
@@ -177,12 +187,14 @@ const SubjectPage = ({ subjectId, onBack, onStartQuiz, onPlayVideo, onSelectAssi
                 )}
 
                 {/* Student Reviews Section */}
-                <div className="bg-white p-6 rounded-xl shadow-md">
+                <div className="bg-white p-6 rounded-xl shadow-md"
+                    style={{ animation: 'fadeInScale 1.1s cubic-bezier(.4,0,.2,1) both' }}>
                     <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Student Reviews</h2>
                     
                     {/* Review Submission Form */}
                     {user && !user.isAnonymous && (
-                        <form onSubmit={handleReviewSubmit} className="mb-8 p-4 bg-slate-50 rounded-lg">
+                        <form onSubmit={handleReviewSubmit} className="mb-8 p-4 bg-slate-50 rounded-lg"
+                            style={{ animation: 'fadeInUp 1.2s cubic-bezier(.4,0,.2,1) both' }}>
                            <div className="flex items-center mb-2">
                                 <span className="mr-3 font-medium">Your Rating:</span>
                                 {[1,2,3,4,5].map(star => (
@@ -209,8 +221,9 @@ const SubjectPage = ({ subjectId, onBack, onStartQuiz, onPlayVideo, onSelectAssi
                     {/* Display Existing Reviews */}
                     {reviews.length > 0 ? (
                         <ul className="space-y-4">
-                            {reviews.map(review => (
-                                <li key={review.id} className="p-4 border-b border-slate-100">
+                            {reviews.map((review, idx) => (
+                                <li key={review.id} className="p-4 border-b border-slate-100"
+                                    style={{ animation: `fadeInUp 1.3s ${0.05 * idx}s both` }}>
                                     <div className="flex items-center mb-1">
                                         <StarRating rating={review.rating} />
                                         <p className="ml-auto text-xs text-slate-500 font-medium">
@@ -231,3 +244,4 @@ const SubjectPage = ({ subjectId, onBack, onStartQuiz, onPlayVideo, onSelectAssi
 };
 
 export default SubjectPage;
+
