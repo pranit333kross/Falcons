@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { getQuizById, saveQuizResult } from '../api/firestore.jsx';
 import { useAuth } from '../contexts/AuthContext.jsx';
@@ -19,9 +20,13 @@ const QuizResults = ({ score, totalQuestions, onRestart, onFinish }) => {
     }
 
     return (
-        <div className="max-w-2xl mx-auto text-center bg-white p-8 rounded-2xl shadow-xl">
+        <div
+            className="max-w-2xl mx-auto text-center bg-white p-8 rounded-2xl shadow-xl"
+            style={{ animation: 'fadeInScale 0.7s cubic-bezier(.4,0,.2,1) both' }}
+        >
             {percentage === 100 && (
-                <div className="mb-8 p-4 bg-yellow-100 border-2 border-dashed border-yellow-400 rounded-lg">
+                <div className="mb-8 p-4 bg-yellow-100 border-2 border-dashed border-yellow-400 rounded-lg"
+                    style={{ animation: 'popIn 0.6s cubic-bezier(.4,0,.2,1) both' }}>
                     <div className="flex justify-center items-center text-yellow-600">
                         <Trophy className="h-8 w-8 mr-3" />
                         <div className="text-left">
@@ -34,7 +39,10 @@ const QuizResults = ({ score, totalQuestions, onRestart, onFinish }) => {
             <h2 className="text-3xl font-bold text-slate-900 mb-2">Quiz Complete!</h2>
             <p className="text-slate-600 mb-6">{feedbackMessage}</p>
             <div className="mb-8">
-                <div className="text-6xl font-extrabold text-indigo-600">{percentage}%</div>
+                <div className="text-6xl font-extrabold text-indigo-600"
+                    style={{ animation: 'popIn 0.6s cubic-bezier(.4,0,.2,1) both' }}>
+                    {percentage}%
+                </div>
                 <div className="text-lg text-slate-700">You answered <span className="font-bold">{score}</span> out of <span className="font-bold">{totalQuestions}</span> questions correctly.</div>
             </div>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
@@ -98,8 +106,6 @@ const QuizPage = ({ quizId, onFinishQuiz }) => {
         if (currentQuestionIndex >= quiz.questions.length - 1) {
             if (user && !user.isAnonymous) {
                 try {
-                    // --- THIS IS THE FIX ---
-                    // It now correctly uses the 'score' from the state.
                     await saveQuizResult(user.uid, quizId, score, quiz.questions.length, quiz.title);
                 } catch (err) {
                     console.error("Failed to save quiz result:", err);
@@ -139,15 +145,25 @@ const QuizPage = ({ quizId, onFinishQuiz }) => {
     const currentQuestion = quiz.questions[currentQuestionIndex];
 
     return (
-        <div className="max-w-3xl mx-auto bg-white p-6 sm:p-8 rounded-2xl shadow-xl">
-            <h2 className="text-3xl font-bold text-slate-900 mb-2">{quiz.title}</h2>
-            <div className="mt-2 text-sm text-slate-500 mb-6">
+        <div
+            className="max-w-3xl mx-auto bg-white p-6 sm:p-8 rounded-2xl shadow-xl"
+            style={{ animation: 'fadeInScale 0.7s cubic-bezier(.4,0,.2,1) both' }}
+        >
+            <h2 className="text-3xl font-bold text-slate-900 mb-2"
+                style={{ animation: 'fadeInUp 0.5s cubic-bezier(.4,0,.2,1) both' }}>
+                {quiz.title}
+            </h2>
+            <div className="mt-2 text-sm text-slate-500 mb-6"
+                style={{ animation: 'fadeInUp 0.6s cubic-bezier(.4,0,.2,1) both' }}>
                 Question {currentQuestionIndex + 1} of {quiz.questions.length}
             </div>
             <div>
-                <h3 className="text-xl font-semibold text-slate-800 mb-6">{currentQuestion.question}</h3>
+                <h3 className="text-xl font-semibold text-slate-800 mb-6"
+                    style={{ animation: 'fadeInUp 0.7s cubic-bezier(.4,0,.2,1) both' }}>
+                    {currentQuestion.question}
+                </h3>
                 <div className="space-y-4">
-                    {currentQuestion.options.map(option => {
+                    {currentQuestion.options.map((option, idx) => {
                         const isSelected = selectedAnswer === option;
                         const isCorrect = option === currentQuestion.answer;
                         let buttonClass = "w-full text-left p-4 rounded-lg border-2 transition-all duration-200 font-medium flex items-center";
@@ -163,7 +179,13 @@ const QuizPage = ({ quizId, onFinishQuiz }) => {
                             buttonClass += " bg-white border-slate-300 hover:bg-indigo-50 hover:border-indigo-400";
                         }
                         return (
-                            <button key={option} onClick={() => handleAnswerSelect(option)} disabled={isAnswered} className={buttonClass}>
+                            <button
+                                key={option}
+                                onClick={() => handleAnswerSelect(option)}
+                                disabled={isAnswered}
+                                className={buttonClass}
+                                style={{ animation: `fadeInUp 0.5s ${0.1 * idx}s both` }}
+                            >
                                 {isAnswered && (isCorrect ? <CheckCircle className="h-5 w-5 mr-3 text-green-600" /> : isSelected ? <XCircle className="h-5 w-5 mr-3 text-red-600" /> : <div className="h-5 w-5 mr-3"></div>)}
                                 {!isAnswered && <div className="h-5 w-5 mr-3"></div>}
                                 {option}
@@ -173,7 +195,8 @@ const QuizPage = ({ quizId, onFinishQuiz }) => {
                 </div>
             </div>
             {isAnswered && (
-                <div className="mt-8 text-center">
+                <div className="mt-8 text-center"
+                    style={{ animation: 'fadeInUp 0.7s cubic-bezier(.4,0,.2,1) both' }}>
                     <button onClick={handleNextQuestion} className="bg-indigo-600 text-white font-bold py-3 px-10 rounded-lg hover:bg-indigo-700">
                         {currentQuestionIndex < quiz.questions.length - 1 ? 'Next Question' : 'Show Results'}
                     </button>
@@ -184,3 +207,4 @@ const QuizPage = ({ quizId, onFinishQuiz }) => {
 };
 
 export default QuizPage;
+
