@@ -1,43 +1,75 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext.jsx';
 import { uploadVideoAndCreateCourse } from '../api/storage.jsx';
-import { createAssignment, getAssignmentsByInstructor } from '../api/firestore.jsx';
+import { createAssignment, getAssignmentsByInstructor, getCoursesByInstructor, getReviewsForCourse } from '../api/firestore.jsx';
 import Spinner from '../components/common/Spinner.jsx';
-import { FileText, ChevronRight, UploadCloud } from 'lucide-react';
+import { FileText, ChevronRight, UploadCloud, Star, MessageSquare } from 'lucide-react';
 
-const InstructorDashboardPage = ({onViewSubmissions}) => {
+// A small component to display stars, similar to the one on SubjectPage
+const StarRating = ({ rating }) => (
+    <div className="flex items-center">
+        {[1, 2, 3, 4, 5].map((star) => (
+            <Star key={star} className={`h-5 w-5 ${rating >= star ? 'text-yellow-400 fill-current' : 'text-slate-300'}`} />
+        ))}
+    </div>
+);
+
+const InstructorDashboardPage = ({ onViewSubmissions }) => {
     const { user } = useAuth();
-    // State for the video upload form
+    // State for forms
     const [courseTitle, setCourseTitle] = useState('');
     const [courseDescription, setCourseDescription] = useState('');
     const [videoFile, setVideoFile] = useState(null);
     const [uploading, setUploading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
-
-    // --- State for the assignment form ---
     const [assignmentTitle, setAssignmentTitle] = useState('');
     const [assignmentDesc, setAssignmentDesc] = useState('');
     const [assignmentCourseId, setAssignmentCourseId] = useState('');
     const [assignmentLoading, setAssignmentLoading] = useState(false);
     const [assignmentError, setAssignmentError] = useState('');
     const [assignmentSuccess, setAssignmentSuccess] = useState('');
-     // --- NEW: State to hold the list of assignments ---
+    
+    // State for fetched data
     const [assignments, setAssignments] = useState([]);
     const [loadingAssignments, setLoadingAssignments] = useState(true);
+    const [reviews, setReviews] = useState([]);
+    const [loadingReviews, setLoadingReviews] = useState(true);
+
     useEffect(() => {
         if (user) {
-            const fetchAssignments = async () => {
+            const fetchInstructorData = async () => {
                 setLoadingAssignments(true);
+                setLoadingReviews(true);
                 try {
-                    const myAssignments = await getAssignmentsByInstructor(user.uid);
+                    // Fetch assignments and courses created by this instructor
+                    const [myAssignments, myCourses] = await Promise.all([
+                        getAssignmentsByInstructor(user.uid),
+                        getCoursesByInstructor(user.uid)
+                    ]);
                     setAssignments(myAssignments);
+                    
+                    // If the instructor has courses, fetch the reviews for each one
+                    if (myCourses.length > 0) {
+                        const reviewsPromises = myCourses.map(course => getReviewsForCourse(course.id));
+                        const reviewsPerCourse = await Promise.all(reviewsPromises);
+                        
+                        // Combine the reviews with their course titles for easy display
+                        const allReviews = myCourses.map((course, index) => ({
+                            courseTitle: course.title,
+                            reviews: reviewsPerCourse[index]
+                        })).filter(item => item.reviews.length > 0); // Only keep courses that have reviews
+
+                        setReviews(allReviews);
+                    }
+
                 } catch (error) {
-                    console.error("Failed to fetch assignments:", error);
+                    console.error("Failed to fetch instructor data:", error);
                 }
                 setLoadingAssignments(false);
+                setLoadingReviews(false);
             };
-            fetchAssignments();
+            fetchInstructorData();
         }
     }, [user]);
 
@@ -65,7 +97,6 @@ const InstructorDashboardPage = ({onViewSubmissions}) => {
         setUploading(false);
     };
 
-    // --- Handler for creating an assignment ---
     const handleAssignmentSubmit = async (e) => {
         e.preventDefault();
         if (!assignmentTitle || !assignmentDesc || !assignmentCourseId) {
@@ -92,7 +123,37 @@ const InstructorDashboardPage = ({onViewSubmissions}) => {
     return (
         <div>
             <h1 className="text-4xl font-bold text-slate-900 mb-8">Instructor Dashboard</h1>
-            {/* --- NEW: List of Created Assignments --- */}
+            
+            {/* --- Student Feedback Section --- */}
+            <div className="bg-white p-8 rounded-xl shadow-md mb-12">
+                <h2 className="text-2xl font-semibold mb-6 flex items-center"><MessageSquare className="h-6 w-6 mr-3 text-indigo-500" /> Student Feedback & Reviews</h2>
+                {loadingReviews ? (
+                    <div className="flex justify-center"><Spinner /></div>
+                ) : reviews.length > 0 ? (
+                    <div className="space-y-6">
+                        {reviews.map((courseReviews) => (
+                            <div key={courseReviews.courseTitle}>
+                                <h3 className="font-bold text-lg text-slate-800 mb-2">{courseReviews.courseTitle}</h3>
+                                <div className="space-y-4 border-l-4 border-slate-100 pl-4">
+                                    {courseReviews.reviews.map(review => (
+                                        <div key={review.id} className="p-3 bg-slate-50 rounded-lg">
+                                            <div className="flex items-center mb-1">
+                                                <StarRating rating={review.rating} />
+                                                <p className="ml-auto text-xs text-slate-500">{review.userEmail ? review.userEmail.split('@')[0] : 'Anonymous'}</p>
+                                            </div>
+                                            <p className="text-slate-700">{review.text}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <p className="text-slate-500">No student reviews have been submitted for your courses yet.</p>
+                )}
+            </div>
+            
+            {/* My Created Assignments Section */}
             <div className="bg-white p-8 rounded-xl shadow-md mb-12">
                 <h2 className="text-2xl font-semibold mb-6">My Created Assignments</h2>
                 {loadingAssignments ? (
@@ -121,13 +182,12 @@ const InstructorDashboardPage = ({onViewSubmissions}) => {
                     <p className="text-slate-500">You haven't created any assignments yet.</p>
                 )}
             </div>
-            
+
+            {/* Content Creation Forms */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                {/* --- CARD 1: Video Upload --- */}
-                <div className="bg-white p-8 rounded-xl shadow-md">
+                 <div className="bg-white p-8 rounded-xl shadow-md">
                     <h2 className="text-2xl font-semibold mb-6">Create Course & Upload Video</h2>
                     <form onSubmit={handleVideoSubmit} className="space-y-6">
-                        {/* ... video upload form fields ... */}
                         <div>
                             <label className="block text-sm font-medium text-slate-700">Course Title</label>
                             <input type="text" value={courseTitle} onChange={(e) => setCourseTitle(e.target.value)} required className="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm"/>
@@ -140,7 +200,7 @@ const InstructorDashboardPage = ({onViewSubmissions}) => {
                             <label className="block text-sm font-medium text-slate-700">Upload Lecture Video</label>
                             <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-300 border-dashed rounded-md">
                                <div className="space-y-1 text-center">
-                                    <svg className="mx-auto h-12 w-12 text-slate-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true"><path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                                    <UploadCloud className="mx-auto h-12 w-12 text-slate-400" />
                                     <div className="flex text-sm text-slate-600">
                                         <label htmlFor="video-upload" className="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500">
                                             <span>Upload a file</span>
@@ -159,8 +219,6 @@ const InstructorDashboardPage = ({onViewSubmissions}) => {
                         </button>
                     </form>
                 </div>
-
-                {/* --- CARD 2: Create Assignment (NEW) --- */}
                 <div className="bg-white p-8 rounded-xl shadow-md">
                     <h2 className="text-2xl font-semibold mb-6">Create New Assignment</h2>
                     <form onSubmit={handleAssignmentSubmit} className="space-y-6">
@@ -192,4 +250,3 @@ const InstructorDashboardPage = ({onViewSubmissions}) => {
 };
 
 export default InstructorDashboardPage;
-

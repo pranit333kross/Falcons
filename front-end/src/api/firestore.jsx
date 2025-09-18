@@ -135,6 +135,16 @@ const awardBadge = async (userId, result) => {
         }, { merge: true });
     }
 };
+export const getCoursesByInstructor = async (instructorId) => {
+    const coursesRef = collection(db, `/artifacts/${appId}/public/data/courses`);
+    const q = query(coursesRef, where("instructorId", "==", instructorId));
+    const querySnapshot = await getDocs(q);
+    const courses = [];
+    querySnapshot.forEach((doc) => {
+        courses.push({ id: doc.id, ...doc.data() });
+    });
+    return courses;
+};
 
 export const getLecturesForCourse = async (courseId) => {
     const lecturesRef = collection(db, `/artifacts/${appId}/public/data/lectures`);
