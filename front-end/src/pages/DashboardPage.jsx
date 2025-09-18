@@ -53,7 +53,7 @@ const DashboardPage = ({ onSelectCourse }) => {
                 <div className="relative">
                     <input
                         type="text"
-                        placeholder="Search for a course..."
+                        placeholder="Search subjects"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="w-full pl-12 pr-4 py-3 border border-slate-300 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
